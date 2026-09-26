@@ -1,45 +1,58 @@
 # Macon Wayfinder
 
-A privacy-conscious, portable guide to Macon-area rent, utilities, SNAP and benefits resources. Built for Hack for Humanity: Macon.
+A simple, privacy-conscious guide to Macon-area **rent assistance, utility bills, SNAP, and public-benefit information**. Macon Wayfinder provides practical next steps using a curated local resource list. It does not determine eligibility, submit applications, promise funding, or cover emergencies, shelter, or unrelated services.
 
 ## Current handoff status
 
 The repository is `S-ign/Macon-Wayfinder`. Clone it onto your own computer—the app is intended to run there, not on the Hermes server. The public repository can be cloned without GitHub credentials.
 
-## Run on a separate machine
+## Run locally on Windows
 
-Requires Node.js 20.9+ and npm.
+1. Clone the repository using the command: `git clone https://github.com/S-ign/Macon-Wayfinder.git`, then change directory into `Macon-Wayfinder`.
+2. Open the project folder in Visual Studio and use **Terminal → New Terminal**; ensure the terminal is in the folder containing `app.py`.
+3. Create a virtual environment, install Python dependencies and start the app:
 
-```sh
-git clone https://github.com/S-ign/Macon-Wayfinder.git
-cd Macon-Wayfinder
-npm ci
-cp .env.example .env.local
-# Optional: add your private Nexos key to the NEXOS_API_KEY line in .env.local.
-npm run dev
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
 ```
 
-Open http://localhost:3000. Node.js 20.9+ and npm are required. The app works without an API key; local resource matching stays on your computer.
+Open the local URL Streamlit prints, normally `http://localhost:8501`. If PowerShell blocks environment activation, use Command Prompt and run `.venv\Scripts\activate.bat`, or run `.venv\Scripts\python.exe -m pip install -r requirements.txt` and `.venv\Scripts\python.exe -m streamlit run app.py`.
 
 ## Optional AI: Nexos only
 
-Uses the OpenAI-compatible Nexos endpoint only after the user separately opts in and confirms transmission. The server-side default model, `GPT 5.6 Luna`, is from the existing Nexos account handoff.
+The local resource planner works without an API key. The only optional LLM provider is Nexos. For local setup, create `.streamlit/secrets.toml`:
 
-Optional Nexos setup uses one spot only: copy `.env.example` to `.env.local` and put your private `NEXOS_API_KEY` on its single setting line. Do not put the key in application source code. `.env.local` is ignored by Git; never commit or share it. Restart `npm run dev` after adding the key. The server-side model defaults to the model recorded in the account handoff; only the single API-key setting must be supplied locally. Never use `NEXT_PUBLIC_` for a key.
+```toml
+NEXOS_API_KEY = "your-private-key"
+```
 
-By default, form submission and canned examples run only local deterministic code. They do not trigger an LLM. Nexos is optional and only sends a request after the visitor enables the feature, acknowledges the disclosure and explicitly presses its separate Send description to Nexos button. An unrelated or explicitly out-of-scope message is never sent. Do not transmit sensitive or identifying information.
+This secrets file is ignored by Git. Keep the key private; do not put it in Python, commit it, or share it in chat. Restart Streamlit after setting the secret.
 
-The app itself keeps no conversation history and sends store=false. This does not guarantee zero third-party retention; the Nexos provider and account settings govern data processing. Leave AI off unless the account owner approves the applicable settings.
+Form submission and examples use only local deterministic matching. Nexos is contacted only after a user opts in, sees the data-use disclosure, confirms transmission and presses its separate send button. Requests use a fixed Nexos HTTPS endpoint and are not sent if unsupported/out-of-scope. Do not transmit sensitive or identifying information. No API key is required to use the resource guide.
+
+The app keeps no database or conversation history. This does not guarantee zero third-party retention; Nexos processing and retention follow Nexos policies and account settings. Leave AI off unless the account owner approves those settings.
+
+## Deploy with Streamlit Community Cloud
+
+1. Sign in at [share.streamlit.io](https://share.streamlit.io/) with GitHub and create a new app.
+2. Select repository `S-ign/Macon-Wayfinder`, branch `main`, and main file path `app.py`.
+3. Deploy. Community Cloud installs the Python packages from `requirements.txt`.
+4. Optional: under the deployed app's **Settings → Secrets**, add `NEXOS_API_KEY = "your-private-key"`. Do not add the secret to GitHub or source files. The app works without it.
+
+An account owner must connect and deploy the project through Streamlit Community Cloud; pushing code by itself does not publish a live Streamlit app.
 
 ## Checks
 
-- npm ci — reproducible install from the committed lockfile
-- npm run dev — local server
-- npm run lint — ESLint
-- npm run typecheck — TypeScript
-- npm test — local scope, source and safety tests
-- npm run build — production build
-- npm run check — run every check above except starting the app
+```powershell
+python -m unittest discover -s tests -v
+python -m py_compile app.py planner.py resources.py nexos.py
+python -m streamlit run app.py
+```
+
+GitHub Actions runs the Python tests and syntax checks on pushes and pull requests.
 
 ## Supported scope
 
@@ -51,6 +64,6 @@ Not supported: 911 or other emergencies, shelters, homelessness, food distributi
 
 On 2026-09-26 the Macon-Bibb EOC official page https://www.maconbibbeoc.com/services/ listed rent and gas/electric/water utility assistance, phone 478-738-3240, and 456 Bay Street, Macon, GA 31201. The Middle Georgia Community Food Bank official page https://mgcfb.org/find-healthy-food/ listed SNAP outreach at 478-342-3218. Automated access to official Georgia Gateway https://gateway.ga.gov/access/ returned HTTP 403; that resource is expressly marked needs-check until opened in an ordinary browser. Human-verify every phone, intake window, program, funding and detail at the event before demoing.
 
-No accounts, analytics, database or browser-storage history. Page text remains in temporary UI memory until refresh. Nexos credentials are used only server-side. The API route limits text to 2,000 characters, validates response categories, times out after 12 seconds and retains the local result on failures. Do not process real client sensitive details.
+- Nexos credentials are read server-side from local ignored secrets or Streamlit Community Cloud Secrets. The API call limits text to 2,000 characters, validates response categories, times out after 12 seconds and retains the local result on failures. Do not process real client sensitive details.
 
-See PROJECT-BLUEPRINT.md for scope and PHASED-BLUEPRINT.md for testable phases. The code is provided under the MIT License in `LICENSE`.
+See `PROJECT-BLUEPRINT.md` for product scope and `PHASED-BLUEPRINT.md` for migration status. The code is provided under the MIT License in `LICENSE`.

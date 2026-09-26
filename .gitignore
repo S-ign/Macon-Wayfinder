@@ -1,14 +1,17 @@
-node_modules/
-.next/
-out/
-build/
-coverage/
+# Python ignores
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local Streamlit/Nexos secrets
+.streamlit/secrets.toml
 .env
 .env.*
-!.env.example
-*.log
-.DS_Store
-.next-env.d.ts
-*.tsbuildinfo
-.vercel
+
+# Previous frontend build artifacts
+node_modules/
+.next/
 coverage/
+.DS_Store

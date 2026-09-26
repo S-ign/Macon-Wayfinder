@@ -1,29 +1,83 @@
-# Macon Wayfinder — independently testable build phases
+# Macon Wayfinder — Python/Streamlit release roadmap
 
-**Event:** Hack for Humanity: Macon\
-**Product:** Macon Wayfinder\
-**Confirmed scope:** rent, utilities, SNAP and benefits only. No 911/emergencies; no 211, shelter, homelessness, food-pantry listings, or transit.\
-**Models:** Nexos only for separately consented requests; local deterministic results are the default.\
-**Deployment:** portable code and lockfile pushed to GitHub for teammates to clone and run on a separate machine. Never deploy this MVP on the Hermes server.\
-**Working rule:** Phases are independently inspectable and have explicit stop/go acceptance. Finish and verify each phase before its next dependent phase. Leave at least 30 minutes of the three-hour onsite build for freeze, end-to-end checks and demo rehearsal.
+**Confirmed scope:** Macon-area rent, utilities, SNAP and benefits only. No 911/emergencies, shelter, homelessness, food pantry listings or transit.
 
-## Global safety/acceptance rules
+**AI:** Nexos only, optional, user-confirmed; local deterministic results work without credentials.
+
+**Deployment:** Python/Streamlit app intended to be cloned locally or deployed from the GitHub repository through Streamlit Community Cloud. Do not deploy on the Hermes server.
+
+## Global safeguards
+
+- Do not request or store personal identifiers, financial details, or documents; no accounts, database, analytics, or chat history.
+- The local plan is the default and makes no AI request. Nexos is called only after opt-in, disclosure acknowledgement, and deliberate send button. Unsupported requests never go to Nexos.
+- Store Nexos credentials only in ignored local `.streamlit/secrets.toml` or private Streamlit Cloud Secrets. Never commit keys or place them in source/CI.
+- Cover only rent, utility assistance, SNAP and benefits. Never imply eligibility, available funds, open enrollment, or emergency response.
+- Providers determine current availability, requirements, eligibility, funding and hours; resource facts need human re-verification before public demonstration.
+
+## Migration completion checklist
+
+- [x] Rebuilt the app as Python + Streamlit; no Node.js or ESLint is needed to run it.
+- [x] Ported the scoped resource catalogue, local deterministic planner, and opt-in Nexos client.
+- [x] Added Python tests and Windows/Streamlit Cloud setup documentation.
+- [x] Replaced Node CI with Python tests, syntax validation, and a Streamlit startup smoke check.
+- [ ] Finish test and server smoke verification.
+- [x] Removed obsolete Next.js source, manifests, and Node workflows from the current local working tree; push still pending.
+- [ ] Push the verified migration to `S-ign/Macon-Wayfinder` and read it back.
+- [ ] Have the owner deploy on Streamlit Community Cloud and verify its URL/secrets.
+- [ ] Recheck provider details before any public demonstration.
+
+Never treat a GitHub push as proof of a cloud deployment. Never mark an unverified item complete.
+
+**Confirmed scope:** Macon-area rent, utilities, SNAP and benefits only. No 911/emergencies, shelter, homelessness, food pantry listings or transit.
+
+**AI:** Nexos only, optional, user-confirmed; local deterministic results work without credentials.
+
+**Deployment:** Python/Streamlit app intended to be cloned locally or deployed from the GitHub repository through Streamlit Community Cloud. Do not deploy on the Hermes server.
+
+## Global safeguards
+
+- Do not request or store personal identifiers, financial details, or documents; no accounts, database, analytics, or chat history.
+- The local plan is the default and makes no AI request. Nexos is called only after opt-in, disclosure acknowledgement, and deliberate send button. Unsupported requests never go to Nexos.
+- Store Nexos credentials only in ignored local `.streamlit/secrets.toml` or private Streamlit Cloud Secrets. Never commit keys or place them in source/CI.
+- Cover only rent, utility assistance, SNAP and benefits. Never imply eligibility, available funds, open enrollment, or emergency response.
+- Providers determine current availability, requirements, eligibility, funding and hours; resource facts need human re-verification before public demonstration.
+
+## Completed in this migration
+
+- [x] Rebuilt the runnable app as Python + Streamlit; no Node.js or ESLint installation is required.
+- [x] Ported curated resources, deterministic planning, and optional Nexos requests with explicit user confirmation.
+- [x] Added Python tests and Streamlit Community Cloud setup instructions.
+- [x] Replaced Node CI checks with Python tests, syntax validation, and a Streamlit startup smoke check.
+
+## Remaining release gates
+
+- [ ] Run complete Python tests and live Streamlit smoke checks.
+- [x] Removed obsolete Next.js source, manifests, and Node workflows from the current local working tree; push still pending.
+- [ ] Push the migration to `S-ign/Macon-Wayfinder` and verify the pushed commit.
+- [ ] Deploy and verify the app through Streamlit Community Cloud; deployment needs repository-owner action.
+- [ ] Recheck provider information before public demonstration.
+
+## Verification expectations
+
+Tests must confirm approved-scope matching, no unsupported referral, zero Nexos calls without credentials/out-of-scope text, fixed provider endpoint, response validation, and local-plan rendering without credentials. A push is not proof of a Streamlit Cloud deployment. Never claim an unchecked gate as passed.
+
 
 - Do not solicit or store name, contact data, address, SSN, financial details or documents. Do not add sessions, accounts, analytics, advertising, database or chat history.
 - Only contact Nexos after the user checks its optional control, reads an accurate data disclosure and explicitly presses its dedicated Nexos-send button. Selecting an example or hitting the ordinary local action button never sends AI text. Never automatically send an unrecognized/out-of-scope prompt.
-- Put the Nexos key only in ignored local `.env.local` as `NEXOS_API_KEY`; never hard-code it or commit it to this public repository. `GPT 5.6 Luna` is the server-side model constant backed by the existing Nexos account handoff.
+- Store the Nexos key only in ignored local `.streamlit/secrets.toml` or private Streamlit Cloud Secrets. Never hard-code it or commit it. `GPT 5.6 Luna` is the server-side model constant backed by the existing Nexos account handoff.
 - Only rent, gas/electricity/water utilities, SNAP application help and public benefits. Emergency, housing, food pantries, 211 and every other category are excluded. An out-of-scope phrase must not produce a relevant provider, route to AI, add an emergency CTA or imply nonexistent safety coverage.
 - Never assert eligibility, processing status, available funds, service intake, an open LIHEAP season, current appointment or approval. The provider is the sole authority; link and phone first to confirm.
 - The curated and date-stamped resource list controls resource selection. AI cannot invent providers, contacts, eligibility or resource facts. Invalid/timeout/model failure must leave local results working.
 - Program dates, phone numbers, model/keys, network and repository permissions are rechecked instead of assumed.
 
-## Current implementation verification (2026-09-26)
-
-- A reproducible local `npm ci` succeeded on the current Node 22 environment. `npm run check` passed (lint, typecheck, all 38 tests, and optimized Next.js build) after a clean fix; localhost production smoke returned HTTP 200 and the blank navigator request returned HTTP 400.
-- Nexos route uses the documented fixed Gateway URL and keeps its key server-side; real Nexos authentication/model was not testable without owner-provided configuration. It fails closed for unknown/out-of-scope local input before provider transmission, and preserves deterministic on-device plans.
-- Local no-match/out-of-scope results return no provider recommendations. The checked resource sources include EOC and MGCFB; Georgia Gateway remains `needs-check` due automated HTTP 403. Recheck human-facing source pages before demo.
-- The public repository `S-ign/Macon-Wayfinder` is being prepared for its first push using the authorized `id_ed25519_github_motoko` SSH key. Verify remote commit read-back and a clean teammate clone before calling publication complete.
-- No real consumer validation, fresh-host teammate clone, live Nexos request, Gateway browser verification, or event-day rehearsal has yet been recorded.
+- [x] Rebuilt the runnable application as Python + Streamlit; no Node.js or ESLint installation is required.
+- [x] Ported curated resources, deterministic planning, and optional Nexos requests with explicit user confirmation.
+- [x] Added Python tests and Streamlit Community Cloud deployment instructions.
+- [x] Replaced Node CI checks with Python tests and syntax validation.
+- [x] Removed obsolete Next.js source, manifests, and Node workflows from the current local working tree; push still pending.
+- [ ] Push the migration to `S-ign/Macon-Wayfinder` and verify the pushed commit.
+- [ ] Deploy and verify the app through Streamlit Community Cloud; deployment needs repository-owner action.
+- [ ] Recheck provider information before public demonstration.
 
 ## Phase 0 — Product lock and isolated repository
 
@@ -154,7 +208,7 @@ Mock server route request/response. Verify invalid JSON/blank/oversize input, mi
 | Decision/owner | Current status | Acceptance action |
 |---|---|---|
 | User-approved GitHub owner and repository visibility | Must verify | Grant repo owner / auth; preserve privacy preference; verify remote exact commit and fresh clone. |
-| Nexos organization/account and API key | Must verify | Event team provides; enter privately into external developer machine. Never request in this chat. |
+| Nexos organization/account and API key | Must verify | Event team provides; configure only in local ignored Streamlit secrets or Cloud Secrets. Never place credentials in chat or public source. |
 | Exact model string authorized by account | Must verify | Verify inside authorized Nexos account. the server-side model is the documented `GPT 5.6 Luna` account-handoff model, not another environment variable. |
 | Nexos data retention and sharing permission | Must verify | Review provider/workspace terms; keep LLM off without authorization. |
 | Local community validation/briefing | Event time | Confirm priority before final feature freeze. |
