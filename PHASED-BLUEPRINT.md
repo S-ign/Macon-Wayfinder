@@ -20,7 +20,7 @@
 - [x] Ported the scoped resource catalogue, local deterministic planner, and opt-in Nexos client.
 - [x] Added Python tests and Windows/Streamlit Cloud setup documentation.
 - [x] Replaced Node CI with Python tests, syntax validation, and a Streamlit startup smoke check.
-- [ ] Finish test and server smoke verification.
+- [x] Finish test and server smoke verification: all 15 unit/UI tests pass, Python syntax compilation passes, and the live Streamlit health endpoint returned `200 ok`.
 - [x] Removed obsolete Next.js source, manifests, and Node workflows from the current local working tree; push still pending.
 - [ ] Push the verified migration to `S-ign/Macon-Wayfinder` and read it back.
 - [ ] Have the owner deploy on Streamlit Community Cloud and verify its URL/secrets.
