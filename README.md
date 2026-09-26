@@ -4,18 +4,18 @@ A privacy-conscious, portable guide to Macon-area rent, utilities, SNAP and bene
 
 ## Current handoff status
 
-The repository is `S-ign/Macon-Wayfinder`. Clone it onto your own computer—the app is intended to run there, not on the Hermes server. GitHub access is through SSH.
+The repository is `S-ign/Macon-Wayfinder`. Clone it onto your own computer—the app is intended to run there, not on the Hermes server. The public repository can be cloned without GitHub credentials.
 
 ## Run on a separate machine
 
 Requires Node.js 20.9+ and npm.
 
 ```sh
-git clone git@github.com:S-ign/Macon-Wayfinder.git
+git clone https://github.com/S-ign/Macon-Wayfinder.git
 cd Macon-Wayfinder
 npm ci
 cp .env.example .env.local
-# Edit .env.local and set NEXOS_API_KEY to your private Nexos key.
+# Optional: add your private Nexos key to the NEXOS_API_KEY line in .env.local.
 npm run dev
 ```
 
